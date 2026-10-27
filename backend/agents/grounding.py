@@ -85,25 +85,88 @@ def _shirt(name: str | None, default: str) -> str:
     return default
 
 
-def build_badges(telemetry: dict) -> list[dict]:
+# English strings are the golden labels. es/ar keep the same numbers.
+_BADGE = {
+    "en": {
+        "xg": "xG NLR {n} – MCB {m}",
+        "peak": "Peak PDR: {v}",
+        "shifts": "Tactical Shifts: {n}",
+        "ppda": "NLR PPDA: {v}",
+        "shot": "Shot Speed: {v} km/h",
+        "pdr": "Pass Difficulty: {v}/100",
+        "shift": "#{shirt} Shift: {v}m Inside",
+        "ppda_delta": "NLR PPDA: {a} → {b}",
+        "xt": "Central xT +{lift}% ({now})",
+        "line": "Line-Break PDR: {v}/100",
+        "cci": "CCI: {v}",
+        "flank": "NLR Left-Flank Press: -{pct}",
+        "entries": "NLR Final-Third Entries (5m): {n}",
+        "sprint": "#{shirt} Sprint: {v} km/h",
+        "line_shirt": "#{shirt} Line-Break PDR: {v}/100",
+        "ball": "Ball Speed: {v} km/h",
+    },
+    "es": {
+        "xg": "xG NLR {n} – MCB {m}",
+        "peak": "PDR máximo: {v}",
+        "shifts": "Cambios tácticos: {n}",
+        "ppda": "PPDA NLR: {v}",
+        "shot": "Velocidad del tiro: {v} km/h",
+        "pdr": "Dificultad del pase: {v}/100",
+        "shift": "#{shirt} Desplazamiento: {v} m adentro",
+        "ppda_delta": "PPDA NLR: {a} → {b}",
+        "xt": "xT central +{lift}% ({now})",
+        "line": "PDR de ruptura: {v}/100",
+        "cci": "ICC: {v}",
+        "flank": "Presión NLR banda izquierda: -{pct}",
+        "entries": "Entradas NLR al último tercio (5 min): {n}",
+        "sprint": "#{shirt} Carrera: {v} km/h",
+        "line_shirt": "#{shirt} PDR de ruptura: {v}/100",
+        "ball": "Velocidad del balón: {v} km/h",
+    },
+    "ar": {
+        "xg": "xG NLR {n} – MCB {m}",
+        "peak": "ذروة PDR: {v}",
+        "shifts": "تحولات تكتيكية: {n}",
+        "ppda": "PPDA لـ NLR: {v}",
+        "shot": "سرعة التسديدة: {v} كم/س",
+        "pdr": "صعوبة التمريرة: {v}/100",
+        "shift": "انزياح #{shirt}: {v} م للداخل",
+        "ppda_delta": "PPDA لـ NLR: {a} → {b}",
+        "xt": "xT الوسط +{lift}% ({now})",
+        "line": "PDR كسر الخط: {v}/100",
+        "cci": "مؤشر الفوضى: {v}",
+        "flank": "ضغط NLR على الجناح الأيسر: -{pct}",
+        "entries": "دخول NLR للثلث الأخير (5 د): {n}",
+        "sprint": "سرعة #{shirt}: {v} كم/س",
+        "line_shirt": "PDR كسر الخط #{shirt}: {v}/100",
+        "ball": "سرعة الكرة: {v} كم/س",
+    },
+}
+
+
+def build_badges(telemetry: dict, language: str = "en") -> list[dict]:
     """Badges are formatted from engine numbers, so they verify by construction."""
+    text = _BADGE.get(language) or _BADGE["en"]
     if telemetry.get("current_minute") == 90 and telemetry.get("match_rollup"):
         roll = telemetry["match_rollup"]
         xg = roll.get("xg") or {}
         return [
             {
                 "metric_key": "xg",
-                "label": f"xG NLR {float(xg.get('NLR', 0)):.2f} – MCB {float(xg.get('MCB', 0)):.2f}",
+                "label": text["xg"].format(
+                    n=f"{float(xg.get('NLR', 0)):.2f}",
+                    m=f"{float(xg.get('MCB', 0)):.2f}",
+                ),
                 "verified": True,
             },
             {
                 "metric_key": "peak_pdr",
-                "label": f"Peak PDR: {float(roll.get('peak_pdr', 0)):.1f}",
+                "label": text["peak"].format(v=f"{float(roll.get('peak_pdr', 0)):.1f}"),
                 "verified": True,
             },
             {
                 "metric_key": "tactical_shifts",
-                "label": f"Tactical Shifts: {roll.get('tactical_shifts', 0)}",
+                "label": text["shifts"].format(n=roll.get("tactical_shifts", 0)),
                 "verified": True,
             },
         ]
@@ -122,49 +185,52 @@ def build_badges(telemetry: dict) -> list[dict]:
         return next((h for h in highlights if h.get("type") == kind), None)
 
     if "HIGH_PRESS_TURNOVER_TRAP" in types and nlr.get("ppda_5m") is not None:
-        add("ppda_5m", f"NLR PPDA: {nlr['ppda_5m']:.1f}")
+        add("ppda_5m", text["ppda"].format(v=f"{nlr['ppda_5m']:.1f}"))
         shot = highlight("SHOT_SPEED")
         if shot:
-            add("shot_speed_kmh", f"Shot Speed: {shot['value']:.1f} km/h")
+            add("shot_speed_kmh", text["shot"].format(v=f"{shot['value']:.1f}"))
         pdr = highlight("HIGH_DIFFICULTY_LINE_BREAKER")
         if pdr:
-            add("pass_difficulty_rating", f"Pass Difficulty: {pdr['value']:.1f}/100")
+            add("pass_difficulty_rating", text["pdr"].format(v=f"{pdr['value']:.1f}"))
 
     inversion = next((a for a in anomalies if a.get("anomaly_type") == "STRUCTURAL_INVERSION_OVERLOAD"), None)
     if inversion:
         shift = float(inversion.get("shift_distance_m") or 0)
         shirt = _shirt(inversion.get("primary_player_name"), "2")
-        add("shift_distance_m", f"#{shirt} Shift: {shift:.1f}m Inside")
+        add("shift_distance_m", text["shift"].format(shirt=shirt, v=f"{shift:.1f}"))
         if nlr.get("ppda_baseline") is not None and nlr.get("ppda_5m") is not None:
-            add("ppda_5m", f"NLR PPDA: {nlr['ppda_baseline']:.1f} → {nlr['ppda_5m']:.1f}")
+            add(
+                "ppda_5m",
+                text["ppda_delta"].format(a=f"{nlr['ppda_baseline']:.1f}", b=f"{nlr['ppda_5m']:.1f}"),
+            )
         base = mcb.get("xt_central_baseline") or 0
         now = mcb.get("xt_central_5m") or 0
         if base:
             lift = round((now - base) / base * 100)
-            add("xt_5m", f"Central xT +{lift}% ({now:.2f})")
+            add("xt_5m", text["xt"].format(lift=lift, now=f"{now:.2f}"))
         pdr = highlight("HIGH_DIFFICULTY_LINE_BREAKER")
         if pdr:
-            add("pass_difficulty_rating", f"Line-Break PDR: {pdr['value']:.1f}/100")
+            add("pass_difficulty_rating", text["line"].format(v=f"{pdr['value']:.1f}"))
 
     if "LOW_BLOCK_PRESSING_COLLAPSE" in types:
-        add("control_vs_chaos_index", f"CCI: {float(telemetry.get('control_vs_chaos_index') or 0):.1f}")
+        add("control_vs_chaos_index", text["cci"].format(v=f"{float(telemetry.get('control_vs_chaos_index') or 0):.1f}"))
         drop = telemetry.get("nlr_flank_press_drop")
         if drop is not None:
-            add("flank_press_drop", f"NLR Left-Flank Press: -{float(drop):.0%}")
+            add("flank_press_drop", text["flank"].format(pct=f"{float(drop):.0%}"))
         entries = telemetry.get("nlr_final_third_entries_5m")
-        add("final_third_entries", f"NLR Final-Third Entries (5m): {entries}")
+        add("final_third_entries", text["entries"].format(n=entries))
 
     if "SUBSTITUTION_PACE_MISMATCH" in types:
         sprint = highlight("SPRINT_THRESHOLD_ALERT")
         pdr = highlight("HIGH_DIFFICULTY_LINE_BREAKER")
         if sprint:
             shirt = _shirt(sprint.get("player_name"), "19")
-            add("sprint_kmh", f"#{shirt} Sprint: {sprint['value']:.1f} km/h")
+            add("sprint_kmh", text["sprint"].format(shirt=shirt, v=f"{sprint['value']:.1f}"))
         if pdr:
             shirt = _shirt(pdr.get("player_name"), "8")
-            add("pass_difficulty_rating", f"#{shirt} Line-Break PDR: {pdr['value']:.1f}/100")
+            add("pass_difficulty_rating", text["line_shirt"].format(shirt=shirt, v=f"{pdr['value']:.1f}"))
             if pdr.get("ball_speed_kmh") is not None:
-                add("ball_speed_kmh", f"Ball Speed: {pdr['ball_speed_kmh']:.1f} km/h")
+                add("ball_speed_kmh", text["ball"].format(v=f"{pdr['ball_speed_kmh']:.1f}"))
     return badges
 
 

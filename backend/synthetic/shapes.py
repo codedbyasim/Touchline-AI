@@ -38,7 +38,7 @@ SHAPE_67 = {
     "MCB_07": [56, 66], "MCB_11": [56, 16], "MCB_09": [52, 40],
 }
 
-# #19 is on, #11 is off. Odegaard is advanced enough to play the winner.
+# #19 is on, #11 is off. Elwick is advanced enough to play the winner.
 SHAPE_82 = {
     "NLR_01": [10, 40], "NLR_02": [36, 66], "NLR_04": [32, 50], "NLR_05": [32, 32],
     "NLR_03": [36, 16], "NLR_06": [48, 44], "NLR_10": [58, 32], "NLR_08": [62, 42],

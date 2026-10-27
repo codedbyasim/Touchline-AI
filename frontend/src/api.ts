@@ -118,6 +118,20 @@ export function positionsFor(minute: number, insight?: Insight | null): Player[]
   return scrubFrame(minute)?.positions_22_players ?? [];
 }
 
+export function cachedDiagnose(ask: Ask): Insight | null {
+  const cacheKey = `${ask.minute}|${ask.favorite_club}|${ask.persona}|${ask.language}`;
+  const hit = cache.diagnose[cacheKey];
+  if (!hit) return cachedInsight(ask);
+  const frame = scrubFrame(ask.minute);
+  return {
+    ...hit,
+    served_from: "precomputed_cache",
+    minute: ask.minute,
+    positions_22_players: frame?.positions_22_players ?? [],
+    scoreline: hit.scoreline || frame?.scoreline || { NLR: 0, MCB: 0 },
+  };
+}
+
 export function cachedInsight(ask: Ask): Insight | null {
   const hit = cache.insights[keyOf(ask)] || cache.insights[keyOf({ ...ask, spotlight_player_id: "" })];
   if (!hit) return null;

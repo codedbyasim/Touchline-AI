@@ -2,6 +2,7 @@ import { Copy, Pause, Play, Radio } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
   analyze,
+  cachedDiagnose,
   cachedInsight,
   diagnose,
   fetchAuto,
@@ -68,10 +69,13 @@ export default function App() {
   async function load(ask: Ask, opts?: { struggle?: boolean; question?: string }) {
     const seq = ++token.current;
     setBusy(true);
-    const cached = opts?.struggle ? null : cachedInsight(ask);
+    const cached = opts?.struggle ? cachedDiagnose(ask) : cachedInsight(ask);
     if (cached && seq === token.current) {
-      setInsight(cached);
-      setStruggle(null);
+      if (opts?.struggle) setStruggle(cached);
+      else {
+        setInsight(cached);
+        setStruggle(null);
+      }
     }
     const live = opts?.struggle ? await diagnose(ask) : await analyze({ ...ask, custom_question: opts?.question });
     if (seq !== token.current) return;
