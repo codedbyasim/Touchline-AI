@@ -1,0 +1,13 @@
+[project]
+name = "touchline-ai"
+version = "1.0.0"
+description = "Synthetic match insights engine for live broadcast, studio, and personalised fan experiences."
+requires-python = ">=3.11"
+readme = "README.md"
+
+[tool.vercel]
+entrypoint = "api.index:app"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
