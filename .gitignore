@@ -11,6 +11,6 @@ __pycache__/
 node_modules/
 frontend/dist/
 dist/
-public/
+/public/
 *.log
 .DS_Store
