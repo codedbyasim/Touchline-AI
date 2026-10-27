@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #070b14;
+}
+
+body {
+  font-family: Figtree, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(1100px 420px at 50% -10%, rgba(61, 139, 253, 0.18), transparent 60%),
+    radial-gradient(800px 420px at 100% 100%, rgba(255, 51, 85, 0.12), transparent 55%),
+    #070b14;
+}
+
+.desk-grid {
+  background-image: linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.panel {
+  background: rgba(10, 16, 32, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.agent-node {
+  opacity: 0.45;
+  border-style: dashed;
+}
+
+.agent-node.live {
+  animation: ignite 0.7s ease forwards;
+}
+
+.agent-node.live:nth-child(2) { animation-delay: 0.12s; }
+.agent-node.live:nth-child(3) { animation-delay: 0.24s; }
+.agent-node.live:nth-child(4) { animation-delay: 0.36s; }
+
+@keyframes ignite {
+  0% { opacity: 0.4; border-style: dashed; transform: translateY(2px); }
+  100% { opacity: 1; border-style: solid; transform: none; box-shadow: 0 0 18px rgba(61, 220, 132, 0.18); }
+}
+
+.lower-third {
+  background: linear-gradient(90deg, rgba(7, 11, 20, 0.92), rgba(7, 11, 20, 0.78) 70%, rgba(7, 11, 20, 0.4));
+  border-top: 3px solid #e8c547;
+}
+
+.modal-backdrop {
+  background: rgba(2, 6, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.35); border-radius: 99px; }

@@ -1,0 +1,13 @@
+# Runtime dependencies for the Vercel Python function.
+# semantic-kernel is pinned to 1.18.0 (still >=1.15, with ChatCompletionAgent).
+# Releases from 1.21 onward require scipy, and 1.24+ also require aiortc/PyAV.
+# Together with the Azure extras in 1.33+ that pushes the unzipped function
+# past Vercel's 500 MB Python limit. 1.18 keeps Microsoft Semantic Kernel as
+# the orchestrator (Kernel, ChatCompletionAgent, OpenAIChatCompletion) at ~200 MB.
+semantic-kernel==1.18.0
+fastapi==0.162.0
+uvicorn==0.54.0
+numpy>=1.26,<3
+pydantic>=2.6,<2.11,!=2.10.0,!=2.10.1,!=2.10.2,!=2.10.3
+openai>=1.50,<2
+httpx>=0.27,<1

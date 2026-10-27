@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "fastapi",
+  "installCommand": "pip install -r requirements.txt",
+  "buildCommand": "python scripts/build_fallback_cache.py && cd frontend && npm ci && npm run build",
+  "fluid": true,
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "excludeFiles": "{frontend/node_modules,tests,.pytest_cache,**/__pycache__}/**"
+    }
+  }
+}
