@@ -103,7 +103,7 @@ export interface Ask {
   custom_question?: string;
 }
 
-const TIMEOUT_MS = 20000;
+const TIMEOUT_MS = 30000;
 
 function keyOf(ask: Ask): string {
   return `${ask.minute}|${ask.persona}|${ask.language}|${ask.favorite_club}|${ask.spotlight_player_id || ""}`;

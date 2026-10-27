@@ -25,10 +25,10 @@ from backend.synthetic.squads import BY_ID
 AIML_BASE_URL = "https://api.aimlapi.com/v1"
 AIML_MODEL = "gpt-4o-mini"
 # The brief treats anything slower than 4 seconds as a failed agent. Measured
-# completions on this model sit just over that, so the desk waits 8 seconds,
-# long enough for a real answer to be audited and short enough that a hung
-# call still hands the blackboard to the template.
-AGENT_TIMEOUT_S = 8.0
+# completions on this route are about 5 seconds for the analyst and about 8
+# for the personalizer, so the desk waits 12 seconds. A hung call still hands
+# the blackboard to the template. The template path itself stays under 20 ms.
+AGENT_TIMEOUT_S = 12.0
 
 TURNING_POINTS = (22, 54, 82)
 

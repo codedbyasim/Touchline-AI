@@ -56,7 +56,7 @@ flowchart LR
   FB --> A4
 ```
 
-The blackboard is `MatchBlackboardState`: telemetry, causal diagnosis, personalization, audit, errors, and an explicit handoff log. Agent 4 always runs. A missing `AIML_API_KEY`, a timeout, or JSON that will not parse is a recorded error and a handoff to the template, not a dead screen. The brief names 4.0 seconds. Completions on this route measure about 5 seconds, so each agent is allowed 8 seconds before that handoff. The template path itself stays under 20 ms.
+The blackboard is `MatchBlackboardState`: telemetry, causal diagnosis, personalization, audit, errors, and an explicit handoff log. Agent 4 always runs. A missing `AIML_API_KEY`, a timeout, or JSON that will not parse is a recorded error and a handoff to the template, not a dead screen. The brief names 4.0 seconds. Completions on this route measure about 5 seconds for the analyst and about 8 for the personalizer, so each agent is allowed 12 seconds before that handoff. The template path itself stays under 20 ms.
 
 ## Five-stage pipeline
 
@@ -210,19 +210,20 @@ pytest -q
 
 ## Screenshots
 
-Broadcast frames at 1920×1080 from the local desk. Replace the paths below with the artifact files from the demo run.
+Broadcast frames at 1920×1080 from the local desk.
 
 | Frame | File |
 | --- | --- |
-| Landing, 54' | `artifacts/landing-54.png` |
-| 22' high press | `artifacts/minute-22.png` |
-| 67' why we are struggling | `artifacts/minute-67-struggle.png` |
-| 82' pace | `artifacts/minute-82.png` |
-| 90' three turning points | `artifacts/minute-90-recap.png` |
-| Auto-event modal | `artifacts/auto-event.png` |
-| Arabic, RTL | `artifacts/arabic-rtl.png` |
-| Analyst persona | `artifacts/analyst.png` |
-| Spotlight | `artifacts/spotlight.png` |
+| Landing, 54', Semantic Kernel | `landing-54.png` |
+| 22' high press | `minute-22.png` |
+| 67' why we are struggling | `minute-67-struggle.png` |
+| 82' pace | `minute-82.png` |
+| 90' three turning points | `minute-90-recap.png` |
+| Auto-event modal | `auto-event.png` |
+| Arabic, RTL | `arabic-rtl.png` |
+| Analyst persona | `analyst.png` |
+| Spotlight on K. Walker-Peters | `spotlight.png` |
+| Empty `AIML_API_KEY` | `empty-key.png` |
 
 ## Synthetic data
 
