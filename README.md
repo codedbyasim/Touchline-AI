@@ -56,7 +56,7 @@ flowchart LR
   FB --> A4
 ```
 
-The blackboard is `MatchBlackboardState`: telemetry, causal diagnosis, personalization, audit, errors, and an explicit handoff log. Agent 4 always runs. A missing `AIML_API_KEY`, a timeout, or JSON that will not parse is a recorded error and a handoff to the template, not a dead screen. The brief names 4.0 seconds. Completions on this route measure about 5 seconds for the analyst and about 8 for the personalizer, so each agent is allowed 12 seconds before that handoff. The template path itself stays under 20 ms.
+The blackboard is `MatchBlackboardState`: telemetry, causal diagnosis, personalization, audit, errors, and an explicit handoff log. Agent 4 always runs. A missing `AIML_API_KEY`, a timeout, or JSON that will not parse is a recorded error and a handoff to the template, not a dead screen. Agents 2 and 3 run in parallel on a slim facts slice with a token cap, so the wait is the slower call rather than the sum. Each call is allowed 8 seconds, which stays inside a 60-second function. "Why are we struggling?" is one compact call, then the auditor. The broadcast paints the cached answer immediately and swaps in the live answer when it arrives. The template path itself stays under 20 ms.
 
 ## Five-stage pipeline
 
@@ -222,9 +222,9 @@ Broadcast frames at 1920×1080 from the local desk.
 | Auto-event modal | `auto-event.png` |
 | Arabic, RTL | `arabic-rtl.png` |
 | Analyst persona | `analyst.png` |
-| Spotlight on K. Walker-Peters | `spotlight.png` |
+| Spotlight on K. Whitmore | `spotlight.png` |
 | Empty `AIML_API_KEY` | `empty-key.png` |
 
 ## Synthetic data
 
-Every team, player, and event in this repository is synthetic. North London Red and Manchester Blue are not clubs. Names that end in `-Style`, including B. Saka-Style, K. Walker-Peters, M. Odegaard-Style, and E. Haaland-Style, are the fictional roster required by the brief. The match id is `pl_syn_2026_nlr_mcb`, seed 2026. Nothing here is a recording, a feed, or a trademark of a real competition. Do not add real crests, wordmarks, or league devices to the UI.
+Every team, player, and event in this repository is synthetic. North London Red and Manchester Blue are not clubs. Shirt numbers and roles are fixed; the surnames are invented (B. Harland, K. Whitmore, M. Elwick, E. Bramley, J. Ashcombe, L. Torven, and the rest of the squad). None of them is a real player. The match id is `pl_syn_2026_nlr_mcb`, seed 2026. Nothing here is a recording, a feed, or a trademark of a real competition. Do not add real crests, wordmarks, or league devices to the UI.

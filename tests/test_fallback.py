@@ -1,6 +1,7 @@
 """With no AIML key the desk still answers, in every language, inside the word caps."""
 
 import asyncio
+import json
 import time
 
 from backend.agents.fallback import render_copy
@@ -50,7 +51,55 @@ def test_favorite_club_changes_the_voice():
 
 def test_spotlight_centers_the_named_player():
     result = _run(spotlight_player_id="MCB_02")
-    assert "Walker-Peters" in result["narrative_body"]
+    assert "Whitmore" in result["narrative_body"]
+
+
+def test_spanish_and_arabic_pin_headline_why_overlay_and_badges():
+    english = _run(minute=54, language="en")
+    for language in ("es", "ar"):
+        result = _run(minute=54, language=language)
+        assert result["headline"] != english["headline"]
+        assert result["why_it_matters"] != english["why_it_matters"]
+        assert result["broadcast_overlay"]["title"] == result["headline"]
+        assert result["broadcast_overlay"]["subtitle"] == result["why_it_matters"]
+        assert result["badges"][0]["label"] != english["badges"][0]["label"]
+        assert "26.2" in result["badges"][0]["label"]
+        if language == "ar":
+            assert any("\u0600" <= char <= "\u06FF" for char in result["headline"])
+            assert any("\u0600" <= char <= "\u06FF" for char in result["badges"][0]["label"])
+
+
+def test_live_path_replaces_an_english_headline(monkeypatch):
+    monkeypatch.setenv("AIML_API_KEY", "present-but-unused")
+
+    async def english(name, _instructions, _user, max_tokens=0):
+        if name == "CausalAnalyst":
+            return json.dumps(
+                {
+                    "causal_diagnosis": "The full-back stepped inside",
+                    "why_it_matters": "The middle opened up",
+                    "cited_metrics": ["26.2"],
+                    "uncertainty_note": None,
+                }
+            )
+        return json.dumps(
+            {
+                "headline": "Full-back steps inside and the middle opens",
+                "narrative_body": "Un lateral entra y el medio se abre con 26.2 metros.",
+                "why_it_matters": "It matters because the block split.",
+                "broadcast_overlay": {"title": "Full-back steps inside", "subtitle": "the block split"},
+            }
+        )
+
+    monkeypatch.setattr("backend.agents.orchestrator._invoke_agent", english)
+    result = _run(minute=54, language="es")
+    assert result["headline"] == "Un lateral entra por dentro y se abre el medio"
+    assert result["broadcast_overlay"]["title"] == result["headline"]
+    assert result["broadcast_overlay"]["subtitle"] == result["why_it_matters"]
+    assert "26.2" in result["narrative_body"]
+    assert "Desplazamiento" in result["badges"][0]["label"]
+    assert "Full-back" not in result["headline"]
+    assert "Full-back" not in result["why_it_matters"]
 
 
 def test_unanswerable_question_gets_an_epistemic_note():

@@ -203,10 +203,10 @@ export const chrome: Record<Lang, Chrome> = {
 };
 
 export const SPOTLIGHTS = [
-  { id: "NLR_07", name: "B. Saka-Style", shirt: 7 },
-  { id: "MCB_02", name: "K. Walker-Peters", shirt: 2 },
-  { id: "NLR_08", name: "M. Odegaard-Style", shirt: 8 },
-  { id: "MCB_09", name: "E. Haaland-Style", shirt: 9 },
+  { id: "NLR_07", name: "B. Harland", shirt: 7 },
+  { id: "MCB_02", name: "K. Whitmore", shirt: 2 },
+  { id: "NLR_08", name: "M. Elwick", shirt: 8 },
+  { id: "MCB_09", name: "E. Bramley", shirt: 9 },
 ] as const;
 
 export const BOOKMARKS = [22, 54, 67, 82, 90] as const;

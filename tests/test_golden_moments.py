@@ -83,6 +83,17 @@ def test_minute_82_pace():
     ]
 
 
+def test_localized_badges_keep_the_golden_numbers():
+    telemetry = build_telemetry(minute=54)
+    spanish = [badge["label"] for badge in build_badges(telemetry, "es")]
+    arabic = [badge["label"] for badge in build_badges(telemetry, "ar")]
+    assert spanish != _labels(54)
+    assert "26.2" in spanish[0] and "8.4" in spanish[1] and "15.2" in spanish[1]
+    assert "340" in spanish[2] and "0.48" in spanish[2] and "86.5" in spanish[3]
+    assert any("\u0600" <= char <= "\u06FF" for char in arabic[0])
+    assert "26.2" in arabic[0]
+
+
 def test_full_time_rollup():
     roll = match_rollup()
     assert roll["xg"] == {"NLR": 1.84, "MCB": 1.42}

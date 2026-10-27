@@ -18,7 +18,7 @@ from backend.synthetic.squads import MATCH_ID, SEED, player
 
 GOLDEN_PATH = Path(__file__).with_name("golden_match.jsonl")
 
-# Walker-Peters baseline centroid from the SRS example, active point chosen
+# Whitmore (#2) baseline centroid from the SRS example, active point chosen
 # so the Euclidean shift is exactly 26.2 m (dx = 10.5).
 WP_BASELINE = (54.0, 72.0)
 _DX = 10.5
@@ -233,7 +233,7 @@ def generate_match(seed: int = SEED) -> list[dict]:
     n_passes = 225
     filler_speed = (v_mean * n_passes - 68.4) / (n_passes - 1)
 
-    # NLR: 86 by Saka (start x=85, inside MCB's third, excluded from MCB PPDA),
+    # NLR: 86 by Harland (start x=85, inside MCB's third, excluded from MCB PPDA),
     # 34 by central/deeper players (start x<80) including the 0.06 xT pass.
     nlr_ids = ["NLR_10", "NLR_08", "NLR_06", "NLR_09", "NLR_04", "NLR_02"]
     nlr_sizes = [6, 6, 6, 6, 5, 5]  # 34
@@ -266,7 +266,7 @@ def generate_match(seed: int = SEED) -> list[dict]:
     outside_times = _chunk(mcb_times[29:], mcb_sizes)
     for pid, times, flags in zip(mcb_outside_ids, outside_times, _chunk(outside_flags, mcb_sizes)):
         b.vertical_passes(pid, times, flags, filler_speed)
-    # Six of Bernal's passes become the central xT entries (delta 0.08 each).
+    # Six of Fenby's passes become the central xT entries (delta 0.08 each).
     xt_done = 0
     for rec in b.records:
         if rec.get("player_id") == "MCB_17" and rec.get("event_type") == "pass" and a0 < rec["timestamp_ms"] <= a1:
@@ -303,7 +303,7 @@ def generate_match(seed: int = SEED) -> list[dict]:
         b.add_event(ts + 3, "tackle", "MCB_03", start_xy=[94.0, 48.0], end_xy=[94.0, 48.0])
     b.add_event(switch + 50, "possession_change", "NLR_06", start_xy=[72.0, 46.0], end_xy=[66.0, 44.0])
 
-    # Walker baseline touches, early in the 15-minute window so they do not
+    # Whitmore baseline touches, early in the 15-minute window so they do not
     # leak into minute 67's baseline.
     b.add_touch(2_200_000, "MCB_02", WP_BASELINE)
     b.add_touch(2_260_000, "MCB_02", WP_BASELINE)
@@ -362,7 +362,7 @@ def generate_match(seed: int = SEED) -> list[dict]:
         ],
         speed=61.0,
     )
-    # Saka shot. 16 m to goal, 104.2 km/h.
+    # Harland shot. 16 m to goal, 104.2 km/h.
     b.scripted_shot(
         22 * 60 * 1000 + 18 * 1000,
         "NLR_07",
